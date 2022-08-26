@@ -1,11 +1,10 @@
 # @statewalker/utils-dom: DOM Utilities
 
-This package contains DOM manipulation utilities used in other packages.
-* `getElementInvalidation(element)` - returns a Promise instance associated with the given DOM element; the returned promise is resolved when the element is removed from the DOM tree 
+This package contains the following DOM utilities used in other packages:
 * `bindView(iterator, action, options)` - creates and returns a DOM element which is updated each time when the given iterator returns a new value
+* `getElementInvalidation(element)` - returns a Promise instance associated with the given DOM element; the returned promise is resolved when the element is removed from the DOM tree 
 * `replaceDomContent(element, node)` - replaces the content of the given DOM element by the given DOM node (element or text node).
-* `toDomNode(value, doc)` - transforms the given value to a DOM node; if the given value is already a DOM node then it is returned "as is", without modifications.
-
+* `toDomNode(value, doc)` - transforms the given JavaScript value to a DOM node; text, numbers and boolean values are tranformed to Text instances; objects are serialized (with the JSON.stringify method) and also transformed to Text instances; DOM nodes are returned "as is", without modifications.
 
 ## `getElementInvalidation(element)`
 
@@ -35,7 +34,6 @@ assert(invalidation === invalidation2);
 ```
 
 
-
 ## `bindView(iterator, action, options)`
 
 This utility function allows to update HTML elements when the specified iterator yields a new value.
@@ -62,40 +60,81 @@ const elm: Element = bindView(
 )
 ```
 
-The `action(...)` callback method recieve the following structure:
+The `action(...)` callback method recieves the following structure:
 * `params` : parameters object
 * `params.init` - sets the initialization function; it is called when the view is attached to the DOM
 * `params.done` - sets the finalization function which is called when the view is removed from the DOM
 * `params.update` - sets a new function to call on each value update; the function defined with the `update` method has the following signature: `(view, value, oldValue) => { ... }`
 
-
+Example 1: in this example the activation method registers only one method to init/done/update the created view.
 ```javascript
 import { bindView } from '@statewalker/utils-dom'
 
 // Generate a new sequence of values to update
+// (see below for the implementation of the "generateValues" method):
 const it = generateValues(50, 2000);
+
 // Create a new view to append to the document.
 const view = bindView(it, ({ init, update, done }) => {
-  
-  // Initializes our view:
+  // View initialization:
   init((view) => view.innerHTML = "Initializing...");
-  
-  // Destroy the view and clean up all associated resources:
+  // Destroys the view and cleans up all associated resources:
   done((view) => view.innerHTML = "Destroying...");
-
   // This method is called each time when the iterator returns a new value:
   update((view, value, oldValue) => {
     view.innerText = `Counter: ${value}!`;
   })
-
   // Create and returns the view to update:
   return document.createElement("div");
 })
 
 // Append the resulting view to the document:
 document.body.appendChild(view);
+```
 
 
+Example 2: in this example the activation method registers two methods
+for each of the "init/done/update" stages:
+```javascript
+import { bindView } from '@statewalker/utils-dom'
+
+// Generate a new sequence of values to update:
+// (see below for the implementation of the "generateValues" method):
+const it = generateValues(50, 2000);
+
+// In this example the activation function registers two callbacks 
+// for each of the "init/update/done" stages:
+// - one method changes the conntent of the view
+// - the second method prints some messages in the log
+const div = bindView(it, ({ init, update, done }) => {
+  
+  // View initialization:
+  init((view) => view.innerHTML = "Initializing...");
+  // The second function to call on the view initialization:
+  init(() => console.log("Init."))
+  
+  // Destroys the view and cleans up all associated resources:
+  done((view) => view.innerHTML = "Destroying...");
+  // The second method to call on initialization:
+  done(() => console.log("Done."))
+
+  // This method is called each time when the iterator returns a new value:
+  update((view, value, oldValue) => {
+    view.innerText = `Counter: ${value}!`;
+  })
+  // Print the values returned by the iterator:
+  done((view, newValue, oldValue) => console.log("- Update:", { oldValue, newValue }));
+
+  // Create and returns the view to update:
+  return document.createElement("div");
+})
+// Append the resulting view to the document:
+document.body.appendChild(div);
+
+```
+
+The `generateValues` method used in the examples above:
+```javascript
 // This function generates values used to update the view
 async function* generateValues(count = 100, maxTimeout = 1000) {
   for (let i = 0; i < count; i++) {
@@ -124,7 +163,7 @@ replaceDomContent(root, div);
 
 ## `toDomNode(value, doc)`
 
-This method transforms the given value to a DOM node; if the given value is already a DOM node then it is returned "as is", without modifications. It is especially useful to render values on the DOM.
+This method transforms the given JavaScript value to a DOM node; text, numbers and boolean values are tranformed to Text instances; objects are serialized (with the JSON.stringify method) and also transformed to Text instances; DOM nodes are returned "as is", without modifications.
 
 Example:
 ```javascript
