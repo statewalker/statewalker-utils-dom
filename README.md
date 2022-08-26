@@ -122,7 +122,7 @@ replaceDomContent(root, div);
 
 ```
 
-## `toDomNode(value, doc)`
+## `toDomNode(value, doc)`
 
 This method transforms the given value to a DOM node; if the given value is already a DOM node then it is returned "as is", without modifications. It is especially useful to render values on the DOM.
 
