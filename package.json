@@ -16,19 +16,21 @@
     "index.js"
   ],
   "devDependencies": {
-    "@statewalker/rollup": "https://github.com/statewalker/statewalker-rollup.git#^v0.1"
+    "@statewalker/rollup": "^0.1",
+    "eslint": "^8",
+    "expect.js": "^0.3",
+    "mocha": "^10",
+    "rollup": "^2"
   },
-  "module": "dist/index.js",
-  "main": "dist/index.js",
-  "jsdelivr": "dist/index-umd.min.js",
-  "unpkg": "dist/index-umd.min.js",
+  "module": "src/index.js",
   "exports": {
+    "import": "./src/index.js",
     "umd": "./dist/index-umd.min.js",
     "default": "./dist/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/statewalker/statewalker-utils-dom.git"
+    "url": "git@github.com:statewalker/statewalker-utils-dom.git"
   },
   "scripts": {
     "eslint": "eslint src",
@@ -40,8 +42,5 @@
   "sideEffects": false,
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@statewalker/ns": "^0.1"
   }
 }
