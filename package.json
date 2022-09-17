@@ -8,6 +8,7 @@
     "name": "Mikhail Kotelnikov",
     "email": "mikhail.kotelnikov@gmail.com"
   },
+  "license": "MIT",
   "type": "module",
   "files": [
     "dist/**/package.json",
@@ -15,18 +16,20 @@
     "src/**/*.js",
     "index.js"
   ],
+  "module": "src/index.js",
+  "main": "src/index.js",
+  "jsdelivr": "dist/index.js",
+  "unpkg": "dist/index.js",
+  "exports": {
+    "umd": "./dist/index-umd.min.js",
+    "default": "./src/index.js"
+  },
   "devDependencies": {
     "@statewalker/rollup": "^0.1.5",
     "eslint": "^8",
     "expect.js": "^0.3",
     "mocha": "^10",
     "rollup": "^2"
-  },
-  "module": "src/index.js",
-  "exports": {
-    "import": "./src/index.js",
-    "umd": "./dist/index-umd.min.js",
-    "default": "./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -38,7 +41,6 @@
     "test": "mocha -R spec ./test/index.js && yarn eslint",
     "prepublishOnly": "rm -rf dist && yarn test && yarn rollup"
   },
-  "license": "MIT",
   "sideEffects": false,
   "publishConfig": {
     "access": "public"
