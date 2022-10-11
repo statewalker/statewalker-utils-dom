@@ -1,5 +1,11 @@
 # @statewalker/utils-dom
 
+## 0.3.0
+
+### Minor Changes
+
+- Small refactor: handle all types of Node instances in the toDomNode method
+
 ## 0.2.0
 
 ### Minor Changes
