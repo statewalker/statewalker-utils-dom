@@ -56,18 +56,14 @@ export function newReactiveNodeTemplate({
     const placeholder = createPlaceholder();
     let stopped = false;
     let resolve;
-    const call = (m) =>
-      new Promise(async (r) => {
-        let result;
-        try {
-          resolve = r;
-          result = await m();
-        } catch (error) {
-          stopped = true;
-        }
-        resolve(result);
-        resolve = undefined;
-      });
+    const call = (m) => new Promise((r) => {
+      resolve = r;
+      return Promise
+        .resolve()
+        .then(m)
+        .catch(() => { stopped = true; })
+        .then(resolve);
+    });
     const stop = () => {
       stopped = true;
       iterator.return && iterator.return();
