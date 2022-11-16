@@ -1,3 +1,3 @@
 /* */
-
+import "./reactiveTest.js";
 // */

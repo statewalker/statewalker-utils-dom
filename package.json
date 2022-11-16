@@ -28,6 +28,7 @@
     "@statewalker/rollup": "^0.1.5",
     "eslint": "^8",
     "expect.js": "^0.3",
+    "jsdom": "^20.0.2",
     "mocha": "^10",
     "rollup": "^2"
   },
