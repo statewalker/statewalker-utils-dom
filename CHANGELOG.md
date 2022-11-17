@@ -1,5 +1,11 @@
 # @statewalker/utils-dom
 
+## 0.3.2
+
+### Patch Changes
+
+- Update rollup and dependencies
+
 ## 0.3.1
 
 ### Patch Changes
