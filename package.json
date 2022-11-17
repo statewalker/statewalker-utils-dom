@@ -30,7 +30,7 @@
     "expect.js": "^0.3",
     "jsdom": "^20.0.2",
     "mocha": "^10",
-    "rollup": "^2"
+    "rollup": "^3"
   },
   "repository": {
     "type": "git",
