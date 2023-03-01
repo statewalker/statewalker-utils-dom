@@ -1,7 +1,7 @@
 export default function getElementInvalidation(
   view,
   getRoot = (element) =>
-    element.closest(".observablehq") || element.ownerDocument.body
+    element ? (element.closest(".observablehq") || element.ownerDocument.body) : null
 ) {
   return (view.invalidation = view.invalidation || disposal(view));
 
