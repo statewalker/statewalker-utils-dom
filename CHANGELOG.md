@@ -1,5 +1,11 @@
 # @statewalker/utils-dom
 
+## 0.3.3
+
+### Patch Changes
+
+- Check DOM element in the invalidation function
+
 ## 0.3.2
 
 ### Patch Changes
