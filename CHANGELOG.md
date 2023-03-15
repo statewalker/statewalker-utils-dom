@@ -1,5 +1,11 @@
 # @statewalker/utils-dom
 
+## 0.4.0
+
+### Minor Changes
+
+- Add errors handling and rendering for reactive templates
+
 ## 0.3.3
 
 ### Patch Changes
