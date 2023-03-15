@@ -46,24 +46,37 @@ export function newReactiveNodeTemplate({
   createPlaceholder = () => document.createComment(""),
   createNode = toDomNode,
   updatePlaceholder = (placeholder, node, prev) => {
+    if (prev && prev.parentElement) prev.parentElement.removeChild(prev);
     if (!placeholder.isConnected) return false;
-    if (prev) prev.parentElement.removeChild(prev);
     if (node) placeholder.parentElement.insertBefore(node, placeholder);
     return true;
-  }
+  },
+  // This handler can transform an iteration error to a visual representation.
+  // It can re-throw the error to stop iteration process.
+  handleError = (error) => {
+    throw error;
+  },
 } = {}) {
   return (iterator) => {
     const placeholder = createPlaceholder();
     let stopped = false;
     let resolve;
-    const call = (m) => new Promise((r) => {
-      resolve = r;
-      return Promise
-        .resolve()
-        .then(m)
-        .catch(() => { stopped = true; })
-        .then(resolve);
-    });
+    const call = (m) =>
+      new Promise((r) => {
+        resolve = r;
+        return Promise
+          .resolve()
+          .then(m)
+          .then((v) => v, async (error) => {
+            try {
+              return { value: await handleError(error) };
+            } catch (e) {
+              stopped = true;
+              return { done: true };
+            }
+          })
+          .then(resolve);
+      });
     const stop = () => {
       stopped = true;
       iterator.return && iterator.return();

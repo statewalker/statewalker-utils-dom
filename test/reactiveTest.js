@@ -2,7 +2,7 @@ import { default as expect } from 'expect.js';
 import { newReactiveNodeTemplate } from '../src/reactive.js';
 import { JSDOM } from 'jsdom';
 
-describe("iterate", () => {
+describe("iterate#newReactiveNodeTemplate", () => {
 
   beforeEach((done) => {
     try {
@@ -14,7 +14,7 @@ describe("iterate", () => {
     }
   });
 
-  it(`newReactiveNodeTemplate - should dynamically replace DOM nodes with values returned by async iterators`, async () => {
+  it(`should dynamically replace DOM nodes with values returned by async iterators`, async () => {
     let element = document.querySelector('body');
     const newReactiveNode = newReactiveNodeTemplate();
 
@@ -47,7 +47,7 @@ describe("iterate", () => {
   })
 
 
-  it(`newReactiveNodeTemplate - should be able to interrupt iterations`, async () => {
+  it(`should be able to interrupt iterations`, async () => {
     let element = document.querySelector('body');
     const newReactiveNode = newReactiveNodeTemplate();
 
@@ -84,6 +84,97 @@ describe("iterate", () => {
 
     await promise;
     expect(document.querySelector("body").textContent).to.eql(before + lastLetter + after);
+  })
+
+
+  it(`errors should stop iterations without rendering updates`, async () => {
+    const newReactiveNode = newReactiveNodeTemplate();
+
+    const before = "before[";
+    const after = "]after";
+
+    const list = ["A", "B", "C", "D", "E", "F"]
+    const lastLetter = "C"
+    let resolve, promise = new Promise((y) => (resolve = y));
+    const contents = [];
+    async function* newIterator() {
+      try {
+        for (let value of list) {
+          if (value === lastLetter) throw new Error('STOP');
+          yield value;
+          contents.push(document.querySelector("body").textContent);
+          await new Promise(s => setTimeout(s, 1));
+        }
+      } finally {
+        resolve();
+      }
+    }
+    const it = newIterator();
+    const [placeholder, start, stop] = newReactiveNode(it);
+    document.body.appendChild(new Text(before));
+    document.body.appendChild(placeholder);
+    document.body.appendChild(new Text(after));
+    start();
+
+    await new Promise(r => setTimeout(r, 10));
+    stop();
+
+    await promise;
+    expect(contents).to.eql([
+      before + 'A' + after,
+      before + 'B' + after,
+    ])
+    expect(document.querySelector("body").textContent).to.eql(before + 'B' + after);
+  })
+
+
+  it(`should be able to handle errors and render their visualization`, async () => {
+    let element = document.querySelector('body');
+    let errorHandled = false;
+    const newReactiveNode = newReactiveNodeTemplate({
+      handleError : (error) => {
+        errorHandled = true;
+        return error.message;
+      }
+    });
+
+    const before = "before[";
+    const after = "]after";
+
+    const list = ["A", "B", "C", "D", "E", "F"]
+    const lastLetter = "C"
+    let resolve, promise = new Promise((y) => (resolve = y));
+    const contents = [];
+    async function* newIterator() {
+      try {
+        for (let value of list) {
+          if (value === lastLetter) throw new Error('STOP');
+          yield value;
+          contents.push(document.querySelector("body").textContent);
+          await new Promise(s => setTimeout(s, 1));
+        }
+      } finally {
+        resolve();
+      }
+    }
+    const it = newIterator();
+    const [placeholder, start, stop] = newReactiveNode(it);
+    document.body.appendChild(new Text(before));
+    document.body.appendChild(placeholder);
+    document.body.appendChild(new Text(after));
+    start();
+
+    expect(errorHandled).to.be(false);
+    await new Promise(r => setTimeout(r, 10));
+    stop();
+
+    await promise;
+    expect(errorHandled).to.be(true);
+    expect(contents).to.eql([
+      before + 'A' + after,
+      before + 'B' + after,
+    ])
+    expect(document.querySelector("body").textContent).to.eql(before + 'STOP' + after);
   })
 
 
