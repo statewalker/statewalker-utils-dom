@@ -1,8 +1,8 @@
 import getElementInvalidation from "./getElementInvalidation.js";
 import toDomNode from "./toDomNode.js";
 
-export function newDomTemplate(template) {
-  const newReactiveNode = newReactiveNodeTemplate();
+export function newDomTemplate(template, options = {}) {
+  const newReactiveNode = newReactiveNodeTemplate(options);
   return (strings = [], ...args) => {
     const [values, start, stop] = toReactiveNodes(args, newReactiveNode);
     requestAnimationFrame(start);

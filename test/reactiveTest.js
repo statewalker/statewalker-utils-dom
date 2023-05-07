@@ -8,7 +8,7 @@ describe("iterate#newReactiveNodeTemplate", () => {
     try {
       const dom = new JSDOM(`<!DOCTYPE html><html><head></head><body></body></html>`);
       globalThis.document = dom.window.document;
-      globalThis.Text = dom.window.Text;
+      // globalThis.Text = dom.window.Text;
     } finally {
       done();
     }
@@ -37,9 +37,9 @@ describe("iterate#newReactiveNodeTemplate", () => {
     }
     const it = newIterator();
     const [placeholder, start, stop] = newReactiveNode(it);
-    document.body.appendChild(new Text(before));
+    document.body.appendChild(document.createTextNode(before));
     document.body.appendChild(placeholder);
-    document.body.appendChild(new Text(after));
+    document.body.appendChild(document.createTextNode(after));
     start();
     await promise;
     stop();
@@ -74,9 +74,9 @@ describe("iterate#newReactiveNodeTemplate", () => {
     }
     const it = newIterator();
     const [placeholder, start, stop] = newReactiveNode(it);
-    document.body.appendChild(new Text(before));
+    document.body.appendChild(document.createTextNode(before));
     document.body.appendChild(placeholder);
-    document.body.appendChild(new Text(after));
+    document.body.appendChild(document.createTextNode(after));
     start();
 
     await notification;
@@ -111,9 +111,9 @@ describe("iterate#newReactiveNodeTemplate", () => {
     }
     const it = newIterator();
     const [placeholder, start, stop] = newReactiveNode(it);
-    document.body.appendChild(new Text(before));
+    document.body.appendChild(document.createTextNode(before));
     document.body.appendChild(placeholder);
-    document.body.appendChild(new Text(after));
+    document.body.appendChild(document.createTextNode(after));
     start();
 
     await new Promise(r => setTimeout(r, 10));
@@ -159,9 +159,9 @@ describe("iterate#newReactiveNodeTemplate", () => {
     }
     const it = newIterator();
     const [placeholder, start, stop] = newReactiveNode(it);
-    document.body.appendChild(new Text(before));
+    document.body.appendChild(document.createTextNode(before));
     document.body.appendChild(placeholder);
-    document.body.appendChild(new Text(after));
+    document.body.appendChild(document.createTextNode(after));
     start();
 
     expect(errorHandled).to.be(false);
