@@ -4,6 +4,7 @@ This package contains the following DOM utilities used in other packages:
 * `bindView(iterator, action, options)` - creates and returns a DOM element which is updated each time when the given iterator returns a new value
 * `getElementInvalidation(element)` - returns a Promise instance associated with the given DOM element; the returned promise is resolved when the element is removed from the DOM tree 
 * `replaceDomContent(element, node)` - replaces the content of the given DOM element by the given DOM node (element or text node).
+* `trackDomNode(node, { onAdd, onRemove, getContainer })` - tracks the node and calls the specified onAdd/onRemove methods when the node is attached/removed from the DOM
 * `toDomNode(value, doc)` - transforms the given JavaScript value to a DOM node; text, numbers and boolean values are tranformed to Text instances; objects are serialized (with the JSON.stringify method) and also transformed to Text instances; DOM nodes are returned "as is", without modifications.
 
 ## `getElementInvalidation(element)`
@@ -160,6 +161,18 @@ div.innerText = 'Hello, world';
 replaceDomContent(root, div);
 
 ```
+
+## `trackDomNode(node, { onAdd, onRemove, getContainer })`
+
+This method tracks the node and calls the specified onAdd/onRemove methods when the node is attached/removed from the DOM.
+
+Parameters: 
+* `node` - the DOM node to track
+* `params` - an object containing method parameters
+* `params.onAdd` - an optional callback method invoked after the node is attached to DOM; it takes the node as the single parameter
+* `params.onRemove` - an optional callback method invoked when the node is removed from DOM; it recieves two parameters: the node itself and a boolean flag showing if the node was notified as attached or not (if the onAdd method was called before)
+* `params.getContainer` - returns the container to track for the specified node
+
 
 ## `toDomNode(value, doc)`
 
